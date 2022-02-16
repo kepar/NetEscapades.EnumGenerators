@@ -200,7 +200,28 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         }
         sb.Append(@"
             };
+        }");
+
+        if (enumToGenerate.Codes.Any())
+        {
+            sb.Append(@"
+
+        public static ToCode(").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+            => value switch
+            {");
+            foreach (var member in enumToGenerate.Codes)
+            {
+                sb.Append(@"
+                ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
+                    .Append(" => \"")
+                    .Append(member.Value).Append("\"),");
+            }
+
+            sb.Append(@"
+            };");
         }
+
+        sb.Append(@"
     }");
         if (!string.IsNullOrEmpty(enumToGenerate.Namespace))
         {

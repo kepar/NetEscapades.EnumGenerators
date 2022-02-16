@@ -134,4 +134,23 @@ namespace MyTestNameSpace
         Assert.Empty(diagnostics);
         return Verifier.Verify(output).UseDirectory("Snapshots");
     }
+
+    [Fact]
+    public Task CanGenerateEnumExtensionsWithCodes()
+    {
+        const string input = @"using NetEscapades.EnumGenerators;
+
+[EnumExtensions]
+public enum MyEnum
+{
+    [EnumCode(""frt"")]
+    First,
+    [EnumCode(""scnd"")]
+    Second,
+}";
+        var (diagnostics, output) = TestHelpers.GetGeneratedOutput<EnumGenerator>(input);
+
+        Assert.Empty(diagnostics);
+        return Verifier.Verify(output).UseDirectory("Snapshots");
+    }
 }

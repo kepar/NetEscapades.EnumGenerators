@@ -10,6 +10,7 @@ namespace NetEscapades.EnumGenerators;
 public class EnumGenerator : IIncrementalGenerator
 {
     private const string EnumExtensionsAttribute = "NetEscapades.EnumGenerators.EnumExtensionsAttribute";
+    private const string EnumCodeAttribute = "NetEscapades.EnumGenerators.EnumCodeAttribute";
     private const string HasFlagsAttribute = "System.HasFlagsAttribute";
 
     public void Initialize(IncrementalGeneratorInitializationContext context)
@@ -92,6 +93,7 @@ public class EnumGenerator : IIncrementalGenerator
     {
         var enumsToGenerate = new List<EnumToGenerate>();
         INamedTypeSymbol? enumAttribute = compilation.GetTypeByMetadataName(EnumExtensionsAttribute);
+        INamedTypeSymbol? enumCodeAttribute = compilation.GetTypeByMetadataName(EnumCodeAttribute);
         if (enumAttribute == null)
         {
             // nothing to do if this type isn't available
@@ -150,6 +152,7 @@ public class EnumGenerator : IIncrementalGenerator
 
             var enumMembers = enumSymbol.GetMembers();
             var members = new List<KeyValuePair<string, object>>(enumMembers.Length);
+            var codes = new List<KeyValuePair<string, object>>(enumMembers.Length);
 
             foreach (var member in enumMembers)
             {
@@ -157,6 +160,18 @@ public class EnumGenerator : IIncrementalGenerator
                     || field.ConstantValue is null)
                 {
                     continue;
+                }
+
+                foreach (AttributeData memberAttributeData in member.GetAttributes())
+                {
+                    // check if this is really the right Attribute
+                    if (enumCodeAttribute?.Equals(memberAttributeData.AttributeClass, SymbolEqualityComparer.Default) ?? false)
+                    {
+                        // get Code From Attribute
+                        var fieldCode =  memberAttributeData.ConstructorArguments[0].Value ?? string.Empty;
+
+                        codes.Add(new KeyValuePair<string, object>(member.Name, fieldCode));
+                    }
                 }
 
                 members.Add(new KeyValuePair<string, object>(member.Name, field.ConstantValue));
@@ -169,7 +184,8 @@ public class EnumGenerator : IIncrementalGenerator
                 underlyingType: underlyingType,
                 isPublic: enumSymbol.DeclaredAccessibility == Accessibility.Public,
                 hasFlags: hasFlags,
-                values: members));
+                values: members,
+                codes: codes));
         }
 
         return enumsToGenerate;

@@ -21,6 +21,7 @@ public class SourceGenerationHelperSnapshotTests
             "int",
             isPublic: true,
             new Dictionary<string, object> { { "First", 0 }, { "Second", 1 } }.ToList(),
+            new Dictionary<string, object> ().ToList(),
             hasFlags: false);
 
         var sb = new StringBuilder();
@@ -40,6 +41,7 @@ public class SourceGenerationHelperSnapshotTests
             "int",
             isPublic: true,
             new Dictionary<string, object> { { "First", 0 }, { "Second", 1 } }.ToList(),
+            new Dictionary<string, object>().ToList(),
             hasFlags: true);
 
         var sb = new StringBuilder();
