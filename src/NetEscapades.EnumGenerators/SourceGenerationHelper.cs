@@ -248,7 +248,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
             }
 
             sb.Append(@"
-                _ => throw new Exception($""could not Parse value '{value}' to enum Dgz.Sanitel.HealthCheck.Domain.Enums.HealthCheckNotificationType"")
+                _ => throw new System.Exception($""could not Parse value '{value}' to enum Dgz.Sanitel.HealthCheck.Domain.Enums.HealthCheckNotificationType"")
             };");
         }
 

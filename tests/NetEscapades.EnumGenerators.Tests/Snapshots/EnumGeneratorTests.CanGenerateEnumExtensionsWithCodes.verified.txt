@@ -130,6 +130,6 @@
             {
                 "frt" => MyEnum.First,
                 "scnd" => MyEnum.Second,
-                _ => throw new Exception($"could not Parse value '{value}' to enum Dgz.Sanitel.HealthCheck.Domain.Enums.HealthCheckNotificationType")
+                _ => throw new System.Exception($"could not Parse value '{value}' to enum Dgz.Sanitel.HealthCheck.Domain.Enums.HealthCheckNotificationType")
             };
     }
