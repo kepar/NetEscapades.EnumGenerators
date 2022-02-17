@@ -206,7 +206,7 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
         {
             sb.Append(@"
 
-        public static ToCode(").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
+        public static string ToCode(").Append(enumToGenerate.FullyQualifiedName).Append(@" value)
             => value switch
             {");
             foreach (var member in enumToGenerate.Codes)
@@ -214,10 +214,41 @@ namespace ").Append(enumToGenerate.Namespace).Append(@"
                 sb.Append(@"
                 ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key)
                     .Append(" => \"")
-                    .Append(member.Value).Append("\"),");
+                    .Append(member.Value).Append("\",");
             }
 
             sb.Append(@"
+                _ => value.ToStringFast()
+            };");
+
+            sb.Append(@"
+
+        public static bool IsDefinedAsCode(string value)
+            => value switch
+            {");
+            foreach (var member in enumToGenerate.Codes)
+            {
+                sb.Append(@"
+                """).Append(member.Value).Append("\" => true,");
+            }
+
+            sb.Append(@"
+                _ => false
+            };");
+
+            sb.Append(@"
+
+        public static ").Append(enumToGenerate.FullyQualifiedName).Append(@" FromCode(string value)
+            => value switch
+            {");
+            foreach (var member in enumToGenerate.Codes)
+            {
+                sb.Append(@"
+                """).Append(member.Value).Append("\" => ").Append(enumToGenerate.FullyQualifiedName).Append('.').Append(member.Key).Append(",");
+            }
+
+            sb.Append(@"
+                _ => throw new Exception($""could not Parse value '{value}' to enum Dgz.Sanitel.HealthCheck.Domain.Enums.HealthCheckNotificationType"")
             };");
         }
 
